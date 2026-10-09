@@ -70,11 +70,24 @@ npm run lint                   # tsc --noEmit
 
 ## A note on how this was built
 
-This project was developed with AI coding assistance. I specified the requirements, the
-architecture, and the acceptance criteria — the docs above are the specification I worked from —
-and reviewed and corrected the generated implementation. I did not hand-write the application
-code.
+**To be precise: I wrote the specification and the architecture. AI wrote nearly all of the code.**
 
-The parts worth discussing in detail are the architectural decisions: why payment handling is
-isolated into serverless functions, why Firestore rules are version-controlled, and why the
-tests target currency and security specifically. I'm happy to go through any of it.
+My contribution is the six documents in `docs/` — product requirements, technical architecture,
+the security and access model, the frontend spec, the feature ticket list, and the Firebase setup
+— plus reviewing and correcting what came back. I did not hand-write the application code.
+
+The documents in `docs/` are the specification I worked from, and they are where the thinking
+actually lives. They are worth reading before the source, because they explain why the code is
+shaped the way it is.
+
+What I'm happy to discuss in detail:
+
+- **Why payment handling is isolated into serverless functions** under `api/` rather than living
+  in the client. Secrets stay server-side, and splitting order creation from verification means
+  the verification path can be reasoned about — and tested — independently.
+- **Why Firestore rules are committed to the repo** as `firestore.rules` alongside
+  `firebase-blueprint.json`, rather than configured in a console where they drift invisibly.
+  Access control becomes a reviewable artifact and a diff.
+- **Why the tests target currency arithmetic and access control specifically.** Those are the two
+  places where a quiet mistake costs real money or leaks data. Everything else failing loudly in
+  development is acceptable; these failing silently is not.
